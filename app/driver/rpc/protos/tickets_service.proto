@@ -5,6 +5,7 @@ option go_package = ".";
 service TicketAnalysisService {
     rpc GetAggregatedCategoryScores(DateRange) returns (ScoresByCategoryResponse);
     rpc GetScoresByTicket(DateRange) returns (ScoresByTicketResponse);
+    rpc GetScoreOveralForQuality(DateRange) returns (QualityResponse);
 }
 
 // *---------------------------------------------------------------------------------------------*
@@ -51,4 +52,11 @@ message ScoresByTicket{
 message CategoryAndScorePairs{
     string CategoryName = 1;
     int32 score = 2;
+}
+
+// *---------------------------------------------------------------------------------------------*
+// *---------------------- Structure for Getting Overal Quality Score ---------------------------*
+// *---------------------------------------------------------------------------------------------*
+message QualityResponse {
+    int32 score = 1;
 }

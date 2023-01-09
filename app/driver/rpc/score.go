@@ -16,18 +16,33 @@ type RatingService interface {
 	GetScoresByTicketInRangeService(from string, to string) ([]*domain.ScoreByTicket, error)
 }
 
-type RPCAdapter struct {
-	ratingService RatingService
+type QualityService interface {
+	GetOveralQualityService(from string, to string) (*domain.OveralQuality, error)
 }
 
-func NewRPCAdapter(rs RatingService) *RPCAdapter {
-	return &RPCAdapter{ratingService: rs}
+type RPCAdapter struct {
+	ratingService  RatingService
+	qualityService QualityService
+}
+
+func NewRPCAdapter(rS RatingService, qS QualityService) *RPCAdapter {
+	return &RPCAdapter{ratingService: rS, qualityService: qS}
 }
 
 var logger = hclog.New(&hclog.LoggerOptions{
 	Name:  "tickets-service",
 	Level: hclog.LevelFromString("DEBUG"),
 })
+
+func (rpc *RPCAdapter) GetScoreOveralForQuality(ctx context.Context, rr *protos.DateRange) (*protos.QualityResponse, error) {
+	overal_score, err := rpc.qualityService.GetOveralQualityService(rr.GetRangeFrom(), rr.GetRangeTo())
+	if err != nil {
+		logger.Error(err.Error())
+	}
+	return &protos.QualityResponse{
+		Score: overal_score.OveralScore,
+	}, nil
+}
 
 func (rpc *RPCAdapter) GetScoresByTicket(ctx context.Context, rr *protos.DateRange) (*protos.ScoresByTicketResponse, error) {
 	scores, err := rpc.ratingService.GetScoresByTicketInRangeService(rr.GetRangeFrom(), rr.GetRangeTo())

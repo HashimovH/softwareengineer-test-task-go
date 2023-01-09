@@ -6,10 +6,6 @@ import (
 	"github.com/HashimovH/softwareengineer-test-task-go/app/core/domain"
 )
 
-type repository struct {
-	DB *sql.DB
-}
-
 func NewRepository(db *sql.DB) *repository {
 	return &repository{DB: db}
 }

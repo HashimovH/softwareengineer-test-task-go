@@ -28,11 +28,16 @@ func main() {
 
 	DB := app.InitDB()
 
-	ratingRepository := repository.NewRepository(DB)
-	service_layer := service.NewService(ratingRepository)
+	// Register services
+	scoreRepository := repository.NewRepository(DB)
+	scoreService := service.NewService(scoreRepository)
+
+	qualityRepository := repository.NewQualityRepository(DB)
+	qualityService := service.NewQualityService(qualityRepository)
+
+	driver := driver.NewRPCAdapter(scoreService, qualityService)
 
 	gs := grpc.NewServer()
-	driver := driver.NewRPCAdapter(service_layer)
 
 	protos.RegisterTicketAnalysisServiceServer(gs, driver)
 	reflection.Register(gs)
