@@ -1,0 +1,54 @@
+syntax = "proto3";
+
+option go_package = ".";
+
+service TicketAnalysisService {
+    rpc GetAggregatedCategoryScores(DateRange) returns (ScoresByCategoryResponse);
+    rpc GetScoresByTicket(DateRange) returns (ScoresByTicketResponse);
+}
+
+// *---------------------------------------------------------------------------------------------*
+// *-------------------------------- Common Request Type ----------------------------------------*
+// *---------------------------------------------------------------------------------------------*
+message DateRange{
+    string range_from = 1;
+    string range_to = 2;
+}
+
+
+// *---------------------------------------------------------------------------------------------*
+// *---------------------- Structures for Getting Score by Category in range --------------------*
+// *---------------------------------------------------------------------------------------------*
+
+message ScoresByCategoryResponse {
+    repeated ScoresByCategory scores = 1;
+}
+message ScoresByCategory{
+    string category_name = 1;
+    int32 ratings_count = 2;
+    repeated DateScore date_scores = 3;
+    int32 total_score = 4;
+}
+
+message DateScore {
+    string date = 1;
+    int32 score = 2;
+}
+
+// *---------------------------------------------------------------------------------------------*
+// *---------------------- Structures for Getting Score by Ticket in range ----------------------*
+// *---------------------------------------------------------------------------------------------*
+
+message ScoresByTicketResponse{
+    repeated ScoresByTicket scores = 1;
+}
+
+message ScoresByTicket{
+    int32 TicketId = 1;
+    repeated CategoryAndScorePairs CategoryScores = 2;
+}
+
+message CategoryAndScorePairs{
+    string CategoryName = 1;
+    int32 score = 2;
+}
