@@ -6,6 +6,7 @@ service TicketAnalysisService {
     rpc GetAggregatedCategoryScores(DateRange) returns (ScoresByCategoryResponse);
     rpc GetScoresByTicket(DateRange) returns (ScoresByTicketResponse);
     rpc GetScoreOveralForQuality(DateRange) returns (QualityResponse);
+    rpc GetScoreChangePeriodOverPeriod(PeriodRange) returns (ChangeOverPeriodResponse);
 }
 
 // *---------------------------------------------------------------------------------------------*
@@ -60,3 +61,16 @@ message CategoryAndScorePairs{
 message QualityResponse {
     int32 score = 1;
 }
+
+// *---------------------------------------------------------------------------------------------*
+// *----------------- Structure for Getting Score change period over period ---------------------*
+// *---------------------------------------------------------------------------------------------*
+message PeriodRange {
+    DateRange end_period = 1;
+    DateRange previous_period = 2;
+}
+
+message ChangeOverPeriodResponse {
+    int32 change_score = 1;
+}
+ 

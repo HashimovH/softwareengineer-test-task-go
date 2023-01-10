@@ -19,3 +19,19 @@ func NewQualityService(qR QualityRepository) *QualityService {
 func (service QualityService) GetOveralQualityService(from string, to string) (*domain.OveralQuality, error) {
 	return service.qualityRepository.GetOveralQualityScore(from, to)
 }
+
+func (service QualityService) GetScoreChangePeriodOverPeriod(current_from string, current_to string, previous_from string, previous_to string) (*domain.PeriodScoreChange, error) {
+	previous, err := service.qualityRepository.GetOveralQualityScore(previous_from, previous_to)
+	if err != nil {
+		return nil, err
+	}
+	current, err := service.qualityRepository.GetOveralQualityScore(current_from, current_to)
+	if err != nil {
+		return nil, err
+	}
+
+	difference := current.OveralScore - previous.OveralScore
+	percentage := (difference / previous.OveralScore) * 100
+
+	return &domain.PeriodScoreChange{ScoreChange: percentage}, nil
+}

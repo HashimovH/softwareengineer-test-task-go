@@ -18,6 +18,7 @@ type RatingService interface {
 
 type QualityService interface {
 	GetOveralQualityService(from string, to string) (*domain.OveralQuality, error)
+	GetScoreChangePeriodOverPeriod(current_from string, current_to string, previous_from string, previous_to string) (*domain.PeriodScoreChange, error)
 }
 
 type RPCAdapter struct {
@@ -33,6 +34,17 @@ var logger = hclog.New(&hclog.LoggerOptions{
 	Name:  "tickets-service",
 	Level: hclog.LevelFromString("DEBUG"),
 })
+
+func (rpc *RPCAdapter) GetScoreChangePeriodOverPeriod(ctx context.Context, rr *protos.PeriodRange) (*protos.ChangeOverPeriodResponse, error) {
+	score_difference, err := rpc.qualityService.GetScoreChangePeriodOverPeriod(rr.GetEndPeriod().GetRangeFrom(), rr.GetEndPeriod().GetRangeTo(), rr.GetPreviousPeriod().GetRangeFrom(), rr.GetPreviousPeriod().GetRangeTo())
+	if err != nil {
+		logger.Error(err.Error())
+		return nil, err
+	}
+	return &protos.ChangeOverPeriodResponse{
+		ChangeScore: score_difference.ScoreChange,
+	}, nil
+}
 
 func (rpc *RPCAdapter) GetScoreOveralForQuality(ctx context.Context, rr *protos.DateRange) (*protos.QualityResponse, error) {
 	overal_score, err := rpc.qualityService.GetOveralQualityService(rr.GetRangeFrom(), rr.GetRangeTo())
