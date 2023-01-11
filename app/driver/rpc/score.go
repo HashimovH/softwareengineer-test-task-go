@@ -9,6 +9,7 @@ import (
 	protos "github.com/HashimovH/softwareengineer-test-task-go/app/driver/rpc/protos/tickets_service"
 	// "github.com/golang/protobuf/ptypes/timestamp"
 	"github.com/hashicorp/go-hclog"
+	"google.golang.org/protobuf/proto"
 )
 
 type RatingService interface {
@@ -100,92 +101,33 @@ func (rpc *RPCAdapter) GetAggregatedCategoryScores(ctx context.Context, rr *prot
 		return nil, err
 	}
 
-	response := &protos.ScoresByCategoryResponse{}
-	categories := make(map[string][]domain.Score)
-
-	// Group scores by category
+	result := &protos.ScoresByCategoryResponse{}
+	// map to store the intermediate data
+	categoryData := make(map[string]*protos.ScoresByCategory)
+	// iterate through the input scores
 	for _, score := range scores {
-		categories[score.Category] = append(categories[score.Category], score)
-	}
-
-	// Convert each category to a ScoresByCategory message
-	for category, categoryScores := range categories {
-		scoresByCategory := &protos.ScoresByCategory{
-			CategoryName: category,
-			RatingsCount: int32(len(categoryScores)),
-			TotalScore:   0,
-			DateScores:   []*protos.DateScore{},
-		}
-
-		// Convert each score to a DateScore message
-		for _, score := range categoryScores {
-			dateScore := &protos.DateScore{
-				Date:  score.Date,
-				Score: int32(score.Score),
+		_, ok := categoryData[score.Category]
+		if !ok {
+			// if category does not exist, create a new entry
+			categoryData[score.Category] = &protos.ScoresByCategory{
+				CategoryName: score.Category,
+				RatingsCount: 0,
+				DateScores:   []*protos.DateScore{},
+				TotalScore:   0,
 			}
-			scoresByCategory.DateScores = append(scoresByCategory.DateScores, dateScore)
-			scoresByCategory.TotalScore += int32(score.Score)
 		}
-
-		response.Scores = append(response.Scores, scoresByCategory)
+		// increment the count
+		categoryData[score.Category].RatingsCount++
+		// increment total score
+		categoryData[score.Category].TotalScore += score.Score
+		// append score to date_scores
+		categoryData[score.Category].DateScores = append(categoryData[score.Category].DateScores,
+			&protos.DateScore{Date: score.Date, Score: proto.Int32(score.Score)})
 	}
+	// convert the map to array of ScoresByCategory
+	for _, value := range categoryData {
+		result.Scores = append(result.Scores, value)
+	}
+	return result, nil
 
-	return response, nil
-
-	// scoresByCategory := make(map[string]map[time.Time][]domain.Score)
-	// for _, score := range scores {
-	// 	if _, ok := scoresByCategory[score.Category]; !ok {
-	// 		scoresByCategory[score.Category] = make(map[time.Time][]domain.Score)
-	// 	}
-	// 	parsed_date, _ := time.Parse(score.Date, "2022-07-28T09:30:00Z")
-	// 	date := parsed_date.Truncate(24 * time.Hour)
-	// 	scoresByCategory[score.Category][date] = append(scoresByCategory[score.Category][date], score)
-	// }
-
-	// for categoryName, dateScoresMap := range scoresByCategory {
-	// 	// Create a set of DateScore values
-	// 	dateScores := make([]*protos.DateScore, 0, len(dateScoresMap))
-	// 	var categoryScores []domain.Score
-	// 	for date, scores := range dateScoresMap {
-	// 		// Convert the date to a Timestamp
-	// 		timestamp := &timestamp.Timestamp{
-	// 			Seconds: date.Unix(),
-	// 			Nanos:   int32(date.UnixNano() % 1e9),
-	// 		}
-
-	// 		// Calculate the average score for the date
-	// 		var totalScore int
-	// 		for _, score := range scores {
-	// 			totalScore += score.Score
-	// 		}
-	// 		averageScore := int32(totalScore) / int32(len(scores))
-
-	// 		// Add a DateScore value to the set
-	// 		dateScores = append(dateScores, &protos.DateScore{
-	// 			Date:  timestamp,
-	// 			Score: averageScore,
-	// 		})
-	// 		categoryScores = append(categoryScores, scores...)
-	// 	}
-
-	// 	var totalScore int32
-
-	// 	for _, score := range categoryScores {
-	// 		totalScore += int32(score.Score)
-	// 	}
-	// 	averageScore := totalScore / int32(len(categoryScores))
-	// 	fmt.Println("Avg Score", averageScore)
-
-	// 	// Build the CategoryResultResponse
-	// 	response = &protos.ScoresByCategoryResponse{
-	// 		Scores: &protos.ScoresByCategory{
-	// 			CategoryName: categoryName,
-	// 			RatingsCount: int32(len(categoryScores)),
-	// 			DateScores:   dateScores,
-	// 			TotalScore:   averageScore,
-	// 		},
-	// 	}
-
-	// }
-	// return response, nil
 }

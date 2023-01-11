@@ -34,7 +34,7 @@ message ScoresByCategory{
 
 message DateScore {
     string date = 1;
-    int32 score = 2;
+    optional int32 score = 2;
 }
 
 // *---------------------------------------------------------------------------------------------*

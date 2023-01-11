@@ -4,7 +4,7 @@ type Score struct {
 	Category string
 	Rating   int
 	Date     string
-	Score    int
+	Score    int32
 }
 
 type ScoreByTicket struct {
