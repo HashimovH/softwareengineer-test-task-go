@@ -11,28 +11,42 @@ func NewRepository(db *sql.DB) *repository {
 }
 
 func (r *repository) GetAggregatedCategoryScoresDaily(from string, to string) ([]domain.Score, error) {
-	query :=
-		`
-		SELECT rc.name, 
+	query := `
+	WITH dates AS (
+		SELECT $1 as dt
+		UNION ALL
+		SELECT 
 		CASE
-		    WHEN julianday(?) - julianday(?) > 31 THEN 
-		      strftime('%Y-%W', r.created_at) 
-		    ELSE 
-		      strftime('%Y-%j', r.created_at) 
-		  END AS date_trunc, 
-		CASE
-		  WHEN rc.weight != 0 THEN
-			ROUND(SUM(rc.weight * r.rating) / (5 * SUM(rc.weight)) * 100)
-		  ELSE 0
-		END AS score,
-		COUNT(r.rating)
-		FROM ratings r 
-		JOIN rating_categories rc ON rc.id = r.rating_category_id 
-		WHERE created_at >= ?
-  			and created_at <= ?
-		GROUP BY r.rating_category_id, date_trunc
+			WHEN julianday($2) - julianday($1) > 31 THEN 
+			  date(dt, '+7 days')
+			ELSE 
+			 date(dt, '+1 day')
+		END AS dt
+		FROM dates
+		WHERE 
+			CASE 
+				WHEN julianday($2) - julianday($1) > 31 THEN 
+					dt < date($2, '-7 days')
+				ELSE 
+					dt < $2
+			END
+	)
+	SELECT dt,cats.name, count(r.rating), ROUND(AVG(r.rating)*20)
+	FROM dates
+	CROSS JOIN (SELECT id, name from rating_categories) as cats
+	LEFT JOIN ratings r ON 
+		CASE 
+			WHEN julianday($2) - julianday($1) > 31 THEN 
+				JULIANDAY(dt) - JULIANDAY(STRFTIME("%Y-%m-%d", r.created_at)) < 7
+				AND JULIANDAY(dt) - JULIANDAY(STRFTIME("%Y-%m-%d", r.created_at)) >= 0
+			ELSE 
+				dt = STRFTIME("%Y-%m-%d", r.created_at) 
+		END
+		AND 
+			cats.id = r.rating_category_id
+	GROUP BY cats.name, dt;
 	`
-	rows, err := r.DB.Query(query, to, from, from, to)
+	rows, err := r.DB.Query(query, from, to)
 	if err != nil {
 		return nil, err
 	}
@@ -41,7 +55,7 @@ func (r *repository) GetAggregatedCategoryScoresDaily(from string, to string) ([
 	data := []domain.Score{}
 	for rows.Next() {
 		i := domain.Score{}
-		err = rows.Scan(&i.Category, &i.Date, &i.Score, &i.Rating)
+		err = rows.Scan(&i.Date, &i.Category, &i.Rating, &i.Score)
 		if err != nil {
 			return nil, err
 		}

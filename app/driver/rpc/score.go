@@ -9,7 +9,7 @@ import (
 	protos "github.com/HashimovH/softwareengineer-test-task-go/app/driver/rpc/protos/tickets_service"
 	// "github.com/golang/protobuf/ptypes/timestamp"
 	"github.com/hashicorp/go-hclog"
-	"google.golang.org/protobuf/proto"
+	// "google.golang.org/protobuf/proto"
 )
 
 type RatingService interface {
@@ -118,11 +118,9 @@ func (rpc *RPCAdapter) GetAggregatedCategoryScores(ctx context.Context, rr *prot
 		}
 		// increment the count
 		categoryData[score.Category].RatingsCount++
-		// increment total score
-		categoryData[score.Category].TotalScore += score.Score
 		// append score to date_scores
 		categoryData[score.Category].DateScores = append(categoryData[score.Category].DateScores,
-			&protos.DateScore{Date: score.Date, Score: proto.Int32(score.Score)})
+			&protos.DateScore{Date: score.Date, Score: score.Score})
 	}
 	// convert the map to array of ScoresByCategory
 	for _, value := range categoryData {
