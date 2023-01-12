@@ -12,18 +12,18 @@ func NewQualityRepository(db *sql.DB) *repository {
 
 func (r *repository) GetOveralQualityScore(from string, to string) (*domain.OveralQuality, error) {
 	query := `
-		SELECT ROUND(SUM(
-				CASE
-					WHEN rc.weight != 0 THEN ROUND((((r.rating * rc.weight)/5) * 100)/rc.weight)
-					ELSE 0
-				END
-			)/COUNT(*)) AS score
-		FROM ratings r
-		LEFT JOIN rating_categories rc ON rc.id = r.rating_category_id
-		WHERE r.created_at BETWEEN "2019-07-20" AND "2019-07-26";
+		select sum(weight*score)/sum(weight) as overal
+		from
+		(
+			SELECT r.ticket_id as ticket_id, rc.name as name, ROUND(AVG(r.rating) * 20) as score,rc.weight as weight
+			FROM ratings r
+			LEFT JOIN rating_categories rc ON rc.id = r.rating_category_id
+			WHERE r.created_at BETWEEN ? AND ?
+			GROUP BY r.ticket_id, r.rating_category_id
+		)
 	`
 
-	rows, err := r.DB.Query(query)
+	rows, err := r.DB.Query(query, from, to)
 	if err != nil {
 		return nil, err
 	}

@@ -3,7 +3,7 @@ package service
 import "github.com/HashimovH/softwareengineer-test-task-go/app/core/domain"
 
 type RatingRepository interface {
-	GetAggregatedCategoryScoresDaily(from string, to string) ([]domain.Score, error)
+	GetAggregatedCategoryScores(from string, to string) ([]domain.Score, error)
 	GetScoresByTicket(from string, to string) ([]*domain.ScoreByTicket, error)
 }
 
@@ -18,7 +18,7 @@ func NewService(ur RatingRepository) *RatingService {
 }
 
 func (service RatingService) GetAggregatedCategoryScoresService(from string, to string) ([]domain.Score, error) {
-	return service.userRepository.GetAggregatedCategoryScoresDaily(from, to)
+	return service.userRepository.GetAggregatedCategoryScores(from, to)
 }
 
 func (service RatingService) GetScoresByTicketInRangeService(from string, to string) ([]*domain.ScoreByTicket, error) {
