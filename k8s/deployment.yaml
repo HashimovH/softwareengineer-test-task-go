@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ticket-analysis-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: ticket-analysis
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 3
+  template:
+    metadata:
+      labels:
+        app: ticket-analysis
+    spec:
+      containers:
+        - name: ticket-analysis-service
+          image: hashimovh/ticket-analysis-service:latest
+          ports:
+            - containerPort: 8080

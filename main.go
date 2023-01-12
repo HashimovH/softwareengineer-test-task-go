@@ -16,13 +16,6 @@ import (
 	"google.golang.org/grpc/reflection"
 )
 
-// func main() {
-// 	log := hclog.Default()
-
-// 	gs := grpc.NewServer()
-// 	protos.RegisterCurrencyServer(gs)
-// }
-
 func main() {
 	log := hclog.Default()
 

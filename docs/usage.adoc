@@ -1,0 +1,47 @@
+== API Usage
+
+Our API creates gRPC server which provides 4 different methods which are listed below
+
+- Get Aggregated Scores by Categories Daily/Weekly
+- Get Scores by Tickets
+- Get Overal Performance Score between period
+- Get Score difference between 2 Date Periods
+
+=== Get Aggregated Scores by Categories Daily/Weekly
+
+==== Input Schema
+[source, json]
+----
+{
+    "range_from": "2019-01-17", 
+    "range_to": "2019-07-19"
+}
+----
+
+Our gRPC method `TicketAnalysisService/GetAggregatedCategoryScores` accepts the above structure and returns the following schema 
+
+[source,json]
+----
+{
+    "categoryName": "Randomness",
+    "ratingsCount": 27,
+    "dateScores": [
+    {
+        "date": "2019-01-17"
+    },
+    {
+        "date": "2019-05-30",
+        "score": 45
+    }
+    ]
+}
+----
+
+**NB:** If `score` field does not exist, front-end should consider it as `N/A` value. Ranges are defines based on the input date range. Iteration through dates are possible.
+
+
+=== Get Scores by Tickets
+
+=== Get Overal Performance Score
+
+=== Get Score difference between 2 Date Periods
