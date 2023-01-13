@@ -1,6 +1,8 @@
 package service
 
-import "github.com/HashimovH/softwareengineer-test-task-go/app/core/domain"
+import (
+	"github.com/HashimovH/softwareengineer-test-task-go/app/core/domain"
+)
 
 type QualityRepository interface {
 	GetOveralQualityScore(from string, to string) (*domain.OveralQuality, error)
@@ -31,7 +33,7 @@ func (service QualityService) GetScoreChangePeriodOverPeriod(current_from string
 	}
 
 	difference := current.OveralScore - previous.OveralScore
-	percentage := (difference / previous.OveralScore) * 100
+	percentage := float64(difference) / float64(previous.OveralScore) * 100
 
-	return &domain.PeriodScoreChange{ScoreChange: percentage}, nil
+	return &domain.PeriodScoreChange{ScoreChange: int32(percentage)}, nil
 }

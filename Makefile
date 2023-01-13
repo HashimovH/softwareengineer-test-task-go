@@ -9,3 +9,7 @@ build:
 .PHONY: run-docker
 run-docker: build-docker-image
     @docker run -p 8000:8000 ticket-analysis-service-go
+
+.PHONY: test
+test: run-tests
+    go test ./tests/...

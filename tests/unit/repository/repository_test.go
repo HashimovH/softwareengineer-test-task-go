@@ -4,11 +4,8 @@ import (
 	"database/sql"
 	_ "github.com/mattn/go-sqlite3"
 
-	"testing"
-
-	// sqlmock "github.com/DATA-DOG/go-sqlmock"
-	// "github.com/HashimovH/softwareengineer-test-task-go/app/config"
 	"github.com/HashimovH/softwareengineer-test-task-go/app/core/repository"
+	"testing"
 )
 
 var db, _ = sql.Open("sqlite3", "./../../test.db")
