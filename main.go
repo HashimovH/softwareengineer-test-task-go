@@ -4,7 +4,7 @@ import (
 	"net"
 	"os"
 
-	"github.com/HashimovH/softwareengineer-test-task-go/app"
+	"github.com/HashimovH/softwareengineer-test-task-go/app/config"
 	"github.com/HashimovH/softwareengineer-test-task-go/app/core/repository"
 	"github.com/HashimovH/softwareengineer-test-task-go/app/core/service"
 	driver "github.com/HashimovH/softwareengineer-test-task-go/app/driver/rpc"
@@ -19,7 +19,7 @@ import (
 func main() {
 	log := hclog.Default()
 
-	DB := app.InitDB()
+	DB := config.InitDB()
 
 	// Register services
 	scoreRepository := repository.NewRepository(DB)
