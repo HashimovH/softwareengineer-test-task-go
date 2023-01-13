@@ -41,5 +41,8 @@ func main() {
 		os.Exit(1)
 	}
 	log.Info("App started")
-	gs.Serve(l)
+	if err := gs.Serve(l); err != nil {
+		log.Error("error grpc serve: %v", err)
+		os.Exit(1)
+	}
 }

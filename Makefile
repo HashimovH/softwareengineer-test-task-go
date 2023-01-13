@@ -13,3 +13,7 @@ run-docker: build-docker-image
 .PHONY: test
 test: run-tests
     go test ./tests/...
+
+.PHONY: lint
+lint: run-lint
+    golangci-lint run
