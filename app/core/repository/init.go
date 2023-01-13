@@ -2,6 +2,6 @@ package repository
 
 import "database/sql"
 
-type repository struct {
+type TicketRepository struct {
 	DB *sql.DB
 }

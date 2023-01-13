@@ -6,13 +6,13 @@ import (
 	"github.com/HashimovH/softwareengineer-test-task-go/app/core/domain"
 )
 
-func NewQualityRepository(db *sql.DB) *repository {
-	return &repository{DB: db}
+func NewQualityRepository(db *sql.DB) *TicketRepository {
+	return &TicketRepository{DB: db}
 }
 
-func (r *repository) GetOveralQualityScore(from string, to string) (*domain.OveralQuality, error) {
+func (r *TicketRepository) GetOveralQualityScore(from string, to string) (*domain.OveralQuality, error) {
 	query := `
-		select sum(weight*score)/sum(weight) as overal
+		select ROUND(sum(weight*score)/sum(weight)) as overal
 		from
 		(
 			SELECT r.ticket_id as ticket_id, rc.name as name, ROUND(AVG(r.rating) * 20) as score,rc.weight as weight

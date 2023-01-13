@@ -6,11 +6,11 @@ import (
 	"github.com/HashimovH/softwareengineer-test-task-go/app/core/domain"
 )
 
-func NewRepository(db *sql.DB) *repository {
-	return &repository{DB: db}
+func NewRepository(db *sql.DB) *TicketRepository {
+	return &TicketRepository{DB: db}
 }
 
-func (r *repository) GetAggregatedCategoryScores(from string, to string) ([]domain.Score, error) {
+func (r *TicketRepository) GetAggregatedCategoryScores(from string, to string) ([]domain.Score, error) {
 	query := `
 		WITH dates AS (
 			SELECT $1 as dt
@@ -66,7 +66,7 @@ func (r *repository) GetAggregatedCategoryScores(from string, to string) ([]doma
 	return data, nil
 }
 
-func (r *repository) GetScoresByTicket(from string, to string) ([]*domain.ScoreByTicket, error) {
+func (r *TicketRepository) GetScoresByTicket(from string, to string) ([]*domain.ScoreByTicket, error) {
 	query := `
 		SELECT r.ticket_id, rc.name, ROUND(AVG(r.rating) * 20) as score
 		FROM ratings r
