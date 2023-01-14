@@ -17,5 +17,5 @@ LABEL maintainer="hashimov99@mail.ru"
 
 WORKDIR /app
 COPY --from=builder /app/main .
-
-CMD ["./main"]
+COPY ./database.db .
+CMD ["./main", "--db", "./database.db"]

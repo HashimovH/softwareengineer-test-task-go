@@ -7,7 +7,7 @@ Clone the repository by using `git clone git@github.com:HashimovH/softwareengine
 
 ### Running via Docker
 ```
-docker run -p 8080:8080 ticket-analysis-service-go
+docker-compose up --build
 ```
 
 command will create container in the `8080` port and it will provide gRPC **reflection** since settings contains `APP_ENV=development` inside compose file.
