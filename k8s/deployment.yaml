@@ -21,3 +21,7 @@ spec:
           image: hashimovh/ticket-analysis-service:latest
           ports:
             - containerPort: 8080
+          envFrom:
+            - configMapRef:
+                name: configmap
+          
