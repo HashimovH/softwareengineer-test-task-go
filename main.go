@@ -11,6 +11,7 @@ import (
 	protos "github.com/HashimovH/softwareengineer-test-task-go/app/driver/rpc/protos/tickets_service"
 
 	"github.com/hashicorp/go-hclog"
+	"github.com/joho/godotenv"
 	_ "github.com/mattn/go-sqlite3"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
@@ -18,6 +19,11 @@ import (
 
 func main() {
 	log := hclog.Default()
+
+	err := godotenv.Load()
+	if err != nil {
+		log.Error("Error loading .env file")
+	}
 
 	DB := config.InitDB()
 
@@ -33,7 +39,13 @@ func main() {
 	gs := grpc.NewServer()
 
 	protos.RegisterTicketAnalysisServiceServer(gs, driver)
-	reflection.Register(gs)
+
+	if isDevelopment() {
+		log.Info("Starting in development mode")
+		reflection.Register(gs)
+	} else {
+		log.Info("Starting in production mode")
+	}
 
 	l, err := net.Listen("tcp", ":8080")
 	if err != nil {
@@ -45,4 +57,12 @@ func main() {
 		log.Error("error grpc serve: %v", err)
 		os.Exit(1)
 	}
+}
+
+func isDevelopment() bool {
+	env := os.Getenv("APP_ENV")
+	if env == "production" {
+		return false
+	}
+	return true
 }
