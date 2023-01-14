@@ -38,6 +38,11 @@ Our gRPC method `TicketAnalysisService/GetAggregatedCategoryScores` accepts the 
 
 **NB:** If `score` field does not exist, front-end should consider it as `N/A` value. Ranges are defines based on the input date range. Iteration through dates are possible.
 
+`gRPCurl` command example
+```
+grpcurl --plaintext -d '{"range_from": "2019-07-17", "range_to": "2019-07-19"}' 127.0.0.1:8080 TicketAnalysisService/GetAggregatedCategoryScores 
+```
+
 
 # Get Scores by Tickets
 
@@ -72,6 +77,11 @@ Our gRPC method `TicketAnalysisService/GetScoresByTicket` accepts the above stru
 
 Empty "score" field means `N/A`
 
+`gRPCurl` Command Example
+```
+grpcurl --plaintext -d '{"range_from": "2019-07-17", "range_to": "2019-07-19"}' 127.0.0.1:8080 TicketAnalysisService/GetScoresByTicket 
+```
+
 # Get Overal Performance Score
 
 ### Input Schema
@@ -89,6 +99,11 @@ Our gRPC method `TicketAnalysisService/GetScoreOveralForQuality` accepts the abo
 {
     "score": 50
 }
+```
+
+`gRPCurl` command example
+```
+grpcurl --plaintext -d '{"range_from": "2019-07-01", "range_to": "2019-07-30"}' 127.0.0.1:8080 TicketAnalysisService/GetScoreOveralForQuality    
 ```
 
 # Get Score difference between 2 Date Periods
@@ -114,4 +129,9 @@ Our gRPC method `TicketAnalysisService/GetScoreChangePeriodOverPeriod` accepts t
 {
     "changeScore": -4
 }
+```
+
+`gRPCurl` command example
+```
+grpcurl --plaintext -d '{"end_period": {"range_from": "2019-08-01", "range_to": "2019-08-30"}, "previous_period": {"range_from": "2019-07-01", "range_to": "2019-07-30"}}' 127.0.0.1:8080 TicketAnalysisService/GetScoreChangePeriodOverPeriod
 ```

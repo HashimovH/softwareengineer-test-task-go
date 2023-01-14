@@ -15,10 +15,6 @@ build:
 docker-build:
     @docker build . -t ticket-analysis-service-go
 
-.PHONY: run-docker
-run-docker: build-docker-image
-    @docker run -p 8080:8080 ticket-analysis-service-go
-
 .PHONY: test
 test: run-tests
     go test ./tests/...
