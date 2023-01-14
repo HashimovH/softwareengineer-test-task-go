@@ -27,5 +27,5 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+          tags: hashimovh/ticket-analysis-service:latest
+          labels: hashimovh/ticket-analysis-service:latest
