@@ -6,8 +6,10 @@ The service should be using provided sample data from SQLite database (`database
 
 Please fork this repository and share the link to your solution with us.
 
-### Tasks
+### Application Documentation
+Click to the following link to browse application documentations **[Docs from Hashim Hashimov](/docs/main.md)**.
 
+### Tasks
 1. Come up with ticket score algorithm that accounts for rating category weights (available in `rating_categories` table). Ratings are given in a scale of 0 to 5. Score should be representable in percentages from 0 to 100. 
 
 2. Build a service that can be queried using [gRPC](https://grpc.io/docs/tutorials/basic/go/) calls and can answer following questions:

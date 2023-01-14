@@ -61,8 +61,5 @@ func main() {
 
 func isDevelopment() bool {
 	env := os.Getenv("APP_ENV")
-	if env == "production" {
-		return false
-	}
-	return true
+	return env != "production"
 }
