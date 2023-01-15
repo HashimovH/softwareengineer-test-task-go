@@ -18,20 +18,65 @@ Our API creates gRPC server which provides 4 different methods which are listed 
 }
 ```
 
-Our gRPC method `TicketAnalysisService/GetAggregatedCategoryScores` accepts the above structure and returns the following schema 
+Our gRPC method `TicketAnalysisService/GetAggregatedCategoryScores` accepts the above structure and returns the following schema. 
+
+NB: It is not exact correct response. Just an example
 
 ```
 {
-    "categoryName": "Randomness",
-    "ratingsCount": 27,
-    "dateScores": [
-    {
-        "date": "2019-01-17"
-    },
-    {
-        "date": "2019-05-30",
-        "score": 45
-    }
+    "scores": [
+        {
+            "categoryName": "Randomness",
+            "ratingsCount": 27,
+            "dateScores": [
+                {
+                    "date": "2019-01-17"
+                },
+                {
+                    "date": "2019-05-30",
+                    "score": 45
+                }
+            ]
+        },
+        {
+            "categoryName": "Grammar",
+            "ratingsCount": 27,
+            "dateScores": [
+                {
+                    "date": "2019-01-17"
+                },
+                {
+                    "date": "2019-05-30",
+                    "score": 45
+                }
+            ]
+        },
+        {
+            "categoryName": "Spelling",
+            "ratingsCount": 27,
+            "dateScores": [
+                {
+                    "date": "2019-01-17"
+                },
+                {
+                    "date": "2019-05-30",
+                    "score": 45
+                }
+            ]
+        },
+        {
+            "categoryName": "GDPR",
+            "ratingsCount": 27,
+            "dateScores": [
+                {
+                    "date": "2019-01-17"
+                },
+                {
+                    "date": "2019-05-30",
+                    "score": 45
+                }
+            ]
+        }
     ]
 }
 ```
@@ -112,12 +157,12 @@ grpcurl --plaintext -d '{"range_from": "2019-07-01", "range_to": "2019-07-30"}' 
 ```
 {
     "end_period": {
-        "range_from": "2019-07-01", 
-        "range_to": "2019-07-30"
-    },
-    "previous_period":{
         "range_from": "2019-08-01", 
         "range_to": "2019-08-30"
+    },
+    "previous_period":{
+        "range_from": "2019-07-01", 
+        "range_to": "2019-07-30"
     }
     
 }

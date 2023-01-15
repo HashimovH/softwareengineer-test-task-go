@@ -2,14 +2,12 @@ package driver
 
 import (
 	"context"
-	// "fmt"
-	// "time"
+	"errors"
 
 	"github.com/HashimovH/softwareengineer-test-task-go/app/core/domain"
 	protos "github.com/HashimovH/softwareengineer-test-task-go/app/driver/rpc/protos/tickets_service"
-	// "github.com/golang/protobuf/ptypes/timestamp"
+
 	"github.com/hashicorp/go-hclog"
-	// "google.golang.org/protobuf/proto"
 )
 
 type RatingService interface {
@@ -37,7 +35,18 @@ var logger = hclog.New(&hclog.LoggerOptions{
 })
 
 func (rpc *RPCAdapter) GetScoreChangePeriodOverPeriod(ctx context.Context, rr *protos.PeriodRange) (*protos.ChangeOverPeriodResponse, error) {
-	score_difference, err := rpc.qualityService.GetScoreChangePeriodOverPeriod(rr.GetEndPeriod().GetRangeFrom(), rr.GetEndPeriod().GetRangeTo(), rr.GetPreviousPeriod().GetRangeFrom(), rr.GetPreviousPeriod().GetRangeTo())
+	from := rr.GetEndPeriod().GetRangeFrom()
+	to := rr.GetEndPeriod().GetRangeTo()
+
+	prev_from := rr.GetPreviousPeriod().GetRangeFrom()
+	prev_to := rr.GetPreviousPeriod().GetRangeTo()
+
+	if from == "" || to == "" || prev_from == "" || prev_to == "" {
+		logger.Error("Input Validation Error")
+		return nil, errors.New("validation Error: date range is not correct")
+	}
+
+	score_difference, err := rpc.qualityService.GetScoreChangePeriodOverPeriod(from, to, prev_from, prev_to)
 	if err != nil {
 		logger.Error(err.Error())
 		return nil, err
@@ -48,7 +57,15 @@ func (rpc *RPCAdapter) GetScoreChangePeriodOverPeriod(ctx context.Context, rr *p
 }
 
 func (rpc *RPCAdapter) GetScoreOveralForQuality(ctx context.Context, rr *protos.DateRange) (*protos.QualityResponse, error) {
-	overal_score, err := rpc.qualityService.GetOveralQualityService(rr.GetRangeFrom(), rr.GetRangeTo())
+	from := rr.GetRangeFrom()
+	to := rr.GetRangeTo()
+
+	if from == "" || to == "" {
+		logger.Error("Input Validation Error")
+		return nil, errors.New("validation Error: date range is not correct")
+	}
+
+	overal_score, err := rpc.qualityService.GetOveralQualityService(from, to)
 	if err != nil {
 		logger.Error(err.Error())
 	}
@@ -58,7 +75,15 @@ func (rpc *RPCAdapter) GetScoreOveralForQuality(ctx context.Context, rr *protos.
 }
 
 func (rpc *RPCAdapter) GetScoresByTicket(ctx context.Context, rr *protos.DateRange) (*protos.ScoresByTicketResponse, error) {
-	scores, err := rpc.ratingService.GetScoresByTicketInRangeService(rr.GetRangeFrom(), rr.GetRangeTo())
+	from := rr.GetRangeFrom()
+	to := rr.GetRangeTo()
+
+	if from == "" || to == "" {
+		logger.Error("Input Validation Error")
+		return nil, errors.New("validation Error: date range is not correct")
+	}
+
+	scores, err := rpc.ratingService.GetScoresByTicketInRangeService(from, to)
 	if err != nil {
 		logger.Error(err.Error())
 	}
@@ -95,7 +120,15 @@ func (rpc *RPCAdapter) GetScoresByTicket(ctx context.Context, rr *protos.DateRan
 }
 
 func (rpc *RPCAdapter) GetAggregatedCategoryScores(ctx context.Context, rr *protos.DateRange) (*protos.ScoresByCategoryResponse, error) {
-	scores, err := rpc.ratingService.GetAggregatedCategoryScoresService(rr.GetRangeFrom(), rr.GetRangeTo())
+
+	from := rr.GetRangeFrom()
+	to := rr.GetRangeTo()
+
+	if from == "" || to == "" {
+		logger.Error("Input Validation Error")
+		return nil, errors.New("validation Error: date range is not correct")
+	}
+	scores, err := rpc.ratingService.GetAggregatedCategoryScoresService(from, to)
 	if err != nil {
 		logger.Error(err.Error())
 		return nil, err

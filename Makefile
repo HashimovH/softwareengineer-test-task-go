@@ -13,12 +13,12 @@ build:
 
 .PHONY: build-docker-image
 docker-build:
-    @docker build . -t ticket-analysis-service-go
+	@docker build . -t ticket-analysis-service-go
 
 .PHONY: test
 test: run-tests
-    go test ./tests/...
+	go test ./tests/...
 
 .PHONY: lint
 lint: run-lint
-    golangci-lint run
+	golangci-lint run
